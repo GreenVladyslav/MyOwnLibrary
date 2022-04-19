@@ -1,7 +1,7 @@
 import $ from '../core';
 
 $.prototype.show = function() {
-    console.log(this); // выводим this из прошло прототипа для работы
+    // console.log(this); // выводим this из прошло прототипа для работы
     for(let i = 0; i < this.length; i++) {
         if (!this[i].style) {
             continue;
@@ -14,7 +14,6 @@ $.prototype.show = function() {
 };
 
 $.prototype.hide = function() {
-    console.log(this); // выводим this из прошло прототипа для работы
     for(let i = 0; i < this.length; i++) {
         if (!this[i].style) {
             continue;
@@ -27,7 +26,6 @@ $.prototype.hide = function() {
 };
 
 $.prototype.toggle = function() {
-    console.log(this); // выводим this из прошло прототипа для работы
     for(let i = 0; i < this.length; i++) {
         if (!this[i].style) {
             continue;

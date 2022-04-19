@@ -1,5 +1,5 @@
 // (() => {
-//         const $ = function (selector) {  
+//  const $ = function (selector) {  
 //     const elements = document.querySelectorAll(selector);
 //         const obj = {};
 
@@ -35,6 +35,13 @@ $.prototype.init = function(selector) {
     if (!selector) {
         return this; //{пустой обьект} что здесь контекст вызова ? Когда мы ввызываем контекст вызова в новом экземпляре при создания новго обьекта то мы ссылаемся на ново созданный обьект 
     }
+    // мы не можем назначить метод queryselectorall На документ
+    if (selector.tagName) { // если то что придет в selector у него есть tagName то это будет html элемент которыой есть на странице а не nodecollection
+        this[0] = selector;
+        this.length = 1;
+        return this; // если фукнция видит ключевое слово return то она прекращает свою работу
+    }
+
     Object.assign(this, document.querySelectorAll(selector)); // (куда, что)
     this.length = document.querySelectorAll(selector).length; // типа длинна один два
     return this;
