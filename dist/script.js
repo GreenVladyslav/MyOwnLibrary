@@ -162,9 +162,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./core */ "./src/js/lib/core.js");
 /* harmony import */ var _modules_display__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/display */ "./src/js/lib/modules/display.js");
 /* harmony import */ var _modules_classes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/classes */ "./src/js/lib/modules/classes.js");
-/* harmony import */ var _modules_actions__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/actions */ "./src/js/lib/modules/actions.js");
+/* harmony import */ var _modules_handlers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/handlers */ "./src/js/lib/modules/handlers.js");
 /* harmony import */ var _modules_attribute__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/attribute */ "./src/js/lib/modules/attribute.js");
+/* harmony import */ var _modules_actions__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/actions */ "./src/js/lib/modules/actions.js");
  // делаем мы это для того чтобы мы могли дальше импортировать модули
+
 
 
 
@@ -184,47 +186,101 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../core */ "./src/js/lib/core.js");
+ // позволяет быстро менять html структуру внури каких-то элементов не только менять но и получать содержимое этого элемента
 
-
-_core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.on = function (eventName, callback) {
-  // (оброботчки то есть клик или сабмит, то что выполнится)
-  if (!eventName || !callback) {
-    return this; // если не был передан то мы ничего не делаем и дальше возвращаем по цепочке
-  }
-
+_core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.html = function (content) {
+  //1.Когда мы передаем и замещаем
   for (let i = 0; i < this.length; i++) {
-    this[i].addEventListener(eventName, callback);
-  }
-
-  return this;
-}; // removeEventListener нам нужно передать строго тоже самое событие
-
-
-_core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.off = function (eventName, callback) {
-  if (!eventName || !callback) {
-    return this;
-  }
-
-  for (let i = 0; i < this.length; i++) {
-    this[i].removeEventListener(eventName, callback);
-  }
-
-  return this;
-};
-
-_core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.click = function (handler) {
-  // принимает обработчик клика
-  for (let i = 0; i < this.length; i++) {
-    // когда handler был передан 
-    if (handler) {
-      this[i].EventListener('click', handler);
+    if (content) {
+      this[i].innerHTML = content;
     } else {
-      this[i].click(); // используется без передачи элемента (если не был передан) клик с пустыми скобками 
+      return this[i].innerHTML; // Возвращае не обьект, а содержимое которое нас интересует
     }
-  }
+  } //2.Если не был передан то вернем
+
 
   return this;
-};
+}; // получить один элемент [0]  [3]
+
+
+_core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.eq = function (i) {
+  // i - номер элемента котороый мне понадобится из выборки 2,3 и так длаее
+  const swap = this[i];
+  const objLength = Object.keys(this).length; // возвращает массив из собственных перечисляемых свойств переданного объекта, в том же порядке, в котором они бы обходились циклом for...in 
+  // помимо this.length  у нас могут быть свои свойства котороые лежат в обьекте
+
+  for (let i = 0; i < objLength; i++) {
+    delete this[i];
+  } // очищаем полностью обьект и формируем заного один элемент
+
+
+  this[0] = swap;
+  this.length = 1; // возвращаем один элемент одно свойство 
+
+  return this;
+}; // можем получить номер по породяку среди всех его соседей у одного общего родителя
+
+
+_core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.index = function () {
+  // просто будет возваращать нам число
+  // нам нужно полуичить индекс какого-то одного элемнта
+  const parent = this[0].parentNode;
+  const childs = [...parent.children]; // получим всех потомков этого родителя html collection это псевдомассив не существует метода
+  // развернули с помозь spread оператора и тепреь у этого массива есть нужные методы
+
+  const findMyIndex = item => {
+    return item == this[0];
+  }; // В переменной childs лежит массив в массиве есть опредленное количе-во элементов и на  кажом из этих элементов будет запускатся функция findMyIdnex(принимает каждый отдельный элемент) и вернемт тот который нам действительно нужен
+
+
+  return childs.findIndex(findMyIndex);
+}; // находим опредленные элементы среди уже выбранных(хчоу найти среди дивов класс актив или some среди more все они divы)
+
+
+_core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.find = function (selector) {
+  let numberOfItems = 0; // общее количество которое получилось 
+
+  let counter = 0; // количество записаных элементов
+
+  const copyObj = Object.assign({}, this); // не глубокая копия нашего обьекта this
+
+  for (let i = 0; i < copyObj.length; i++) {
+    // в каждом из этих скопированых copyObj элементов внутри мы попробуем найти querySelectorall подходящие по этому селектору
+    const arr = copyObj[i].querySelectorAll(selector);
+
+    if (arr.lenggth == 0) {
+      continue;
+    }
+
+    for (let j = 0; j < arr.length; j++) {
+      // общий обьект куда мы записываем по порядку
+      this[counter] = arr[j];
+      counter++;
+    }
+
+    numberOfItems += arr.length;
+  }
+
+  this.length = numberOfItems;
+  const objLength = Object.keys(this).length;
+
+  for (; numberOfItems < objLength; numberOfItems++) {
+    // общее количество элементов которое есть в обьекте Object.keys(this).length;
+    delete this[numberOfItems];
+  } // оставшийся хвостик будет удалятся 
+
+
+  return this;
+}; // // Улучшеный find без length
+// $.prototype.find = function (selector) {
+//     const newObj = this[0].querySelectorAll(selector);
+//     for (let i = 0; i < this.length; i++) {
+//         delete this[i];
+//     }
+//     Object.assign(this, newObj);
+//     this.length = newObj.length;
+//     return this;
+// };
 
 /***/ }),
 
@@ -242,10 +298,9 @@ __webpack_require__.r(__webpack_exports__);
 
 _core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.getAttr = function (name) {
   for (let i = 0; i < this.length; i++) {
-    if (!this[i].getAttribute(name)) {
-      continue;
-    }
-
+    // if (!this[i].getAttribute(name)) {
+    //     continue;
+    // }
     return this[i].getAttribute(name);
   }
 
@@ -254,10 +309,9 @@ _core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.getAttr = function (name
 
 _core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.setAttr = function (name, value) {
   for (let i = 0; i < this.length; i++) {
-    if (!this[i].getAttribute(name)) {
-      continue;
-    }
-
+    // if (this[i].getAttribute(name)) {
+    //     continue;
+    // }
     this[i].setAttribute(name, value);
   }
 
@@ -266,10 +320,9 @@ _core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.setAttr = function (name
 
 _core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.removeAttr = function (name) {
   for (let i = 0; i < this.length; i++) {
-    if (!this[i].getAttribute(name)) {
-      continue;
-    }
-
+    // if (!this[i].getAttribute(name)) {
+    //     continue;
+    // }
     this[i].removeAttribute(name);
   }
 
@@ -278,10 +331,6 @@ _core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.removeAttr = function (n
 
 _core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.toggleAttr = function (name, value) {
   for (let i = 0; i < this.length; i++) {
-    if (!this[i].attribute) {
-      continue;
-    }
-
     if (this[i].hasAttribute(name, value)) {
       this[i].removeAttribute(name, value);
     } else {
@@ -401,6 +450,60 @@ _core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.toggle = function () {
 
 /***/ }),
 
+/***/ "./src/js/lib/modules/handlers.js":
+/*!****************************************!*\
+  !*** ./src/js/lib/modules/handlers.js ***!
+  \****************************************/
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../core */ "./src/js/lib/core.js");
+
+
+_core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.on = function (eventName, callback) {
+  // (оброботчки то есть клик или сабмит, то что выполнится)
+  if (!eventName || !callback) {
+    return this; // если не был передан то мы ничего не делаем и дальше возвращаем по цепочке
+  }
+
+  for (let i = 0; i < this.length; i++) {
+    this[i].addEventListener(eventName, callback);
+  }
+
+  return this;
+}; // removeEventListener нам нужно передать строго тоже самое событие
+
+
+_core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.off = function (eventName, callback) {
+  if (!eventName || !callback) {
+    return this;
+  }
+
+  for (let i = 0; i < this.length; i++) {
+    this[i].removeEventListener(eventName, callback);
+  }
+
+  return this;
+};
+
+_core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.click = function (handler) {
+  // принимает обработчик клика
+  for (let i = 0; i < this.length; i++) {
+    // когда handler был передан 
+    if (handler) {
+      this[i].addEventListener('click', handler);
+    } else {
+      this[i].click(); // используется без передачи элемента (если не был передан) клик с пустыми скобками 
+    }
+  }
+
+  return this;
+};
+
+/***/ }),
+
 /***/ "./src/js/main.js":
 /*!************************!*\
   !*** ./src/js/main.js ***!
@@ -413,11 +516,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _lib_lib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./lib/lib */ "./src/js/lib/lib.js");
  // Контекст вызова this = мы получаем html элеемент когда мы исопльзуем callback функции в качестве обычной то мы обращаясь к this получаем тот элемент на котором произошло событие
 // $('button').on('click', function() { 
-//     $(this).toggleClass('active');
+//     $('div').eq(1).toggleClass('active'); // переключие класса
+// });
+// $('div').click(function() {
+//     console.log($(this).index()); // позволит получить номер элемента на который мы кликаем
 // });
 
-Object(_lib_lib__WEBPACK_IMPORTED_MODULE_0__["default"])('.active').setAttr('data-test');
-console.log(Object(_lib_lib__WEBPACK_IMPORTED_MODULE_0__["default"])('.active').getAttr('data-test'));
+console.log(Object(_lib_lib__WEBPACK_IMPORTED_MODULE_0__["default"])('div').eq(2).find('.more')); // $('button').setAttr('type', 'submit'); //атрибут
+// console.log($('button').html('Hello'));
 
 /***/ })
 

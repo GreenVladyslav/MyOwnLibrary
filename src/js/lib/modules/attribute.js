@@ -2,9 +2,9 @@ import $ from '../core';
 
 $.prototype.getAttr = function(name) {
     for (let i = 0; i < this.length; i++) {
-        if (!this[i].getAttribute(name)) {
-            continue;
-        }
+        // if (!this[i].getAttribute(name)) {
+        //     continue;
+        // }
 
         return this[i].getAttribute(name);
     }
@@ -14,12 +14,12 @@ $.prototype.getAttr = function(name) {
 
 $.prototype.setAttr = function(name, value) {
     for (let i = 0; i < this.length; i++) {
-        if (!this[i].getAttribute(name)) {
-            continue;
-        }
+        // if (this[i].getAttribute(name)) {
+        //     continue;
+        // }
         this[i].setAttribute(name, value); 
         
-    }
+    }   
 
     return this;
 };
@@ -27,9 +27,9 @@ $.prototype.setAttr = function(name, value) {
 
 $.prototype.removeAttr = function(name) {
     for (let i = 0; i < this.length; i++) {
-        if (!this[i].getAttribute(name)) {
-            continue;
-        }
+        // if (!this[i].getAttribute(name)) {
+        //     continue;
+        // }
 
         this[i].removeAttribute(name); 
         
@@ -40,9 +40,6 @@ $.prototype.removeAttr = function(name) {
 
 $.prototype.toggleAttr= function(name, value) {
     for (let i = 0; i < this.length; i++) {
-        if (!this[i].attribute) {
-            continue;
-        }
 
         if (this[i].hasAttribute(name, value)) {
             this[i].removeAttribute(name, value);
