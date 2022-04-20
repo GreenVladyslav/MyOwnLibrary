@@ -9,8 +9,14 @@ import $ from './lib/lib';
 //     console.log($(this).index()); // позволит получить номер элемента на который мы кликаем
 // });
 
-console.log($('div').eq(2).find('.more'));
+// console.log($('div').eq(2).find('.more')); // find
+// console.log($('.some').closest('.findme')); // closest
+// console.log($('.findme').siblings()); // sibling
+
+$('button').fadeIn(3000);
+
+
 
 // $('button').setAttr('type', 'submit'); //атрибут
 
-// console.log($('button').html('Hello')); 
+// console.log($('button').html('Hello'));  innerHtml

@@ -1,6 +1,6 @@
 import $ from '../core';
 
-// позволяет быстро менять html структуру внури каких-то элементов не только менять но и получать содержимое этого элемента
+//innerHTML позволяет быстро менять html структуру внури каких-то элементов не только менять но и получать содержимое этого элемента
 $.prototype.html = function(content) {
     //1.Когда мы передаем и замещаем
     for (let i = 0; i < this.length; i++) {
@@ -85,4 +85,120 @@ $.prototype.find = function(selector) {
 //     Object.assign(this, newObj);
 //     this.length = newObj.length;
 //     return this;
+// };
+
+// В this лежит обьект в котором по ключам записаны опредлеленные ноды и легнс
+// closest получает сам элемент или выше по иерархии
+$.prototype.closest = function(selector) {
+    let counter = 0;
+
+    for (let i = 0; i < this.length; i++) {
+        this[i] = this[i].closest(selector);
+        counter++;
+
+        if (this[i] === null) {
+            const thisNull = 'Не найдено';
+            this[i] = thisNull;
+        }
+    }
+
+    // если вдруг останутся какие-то свойства которые не пренодлжедат команде closest мы их удалим
+    const objLength = Object.keys(this).length; // (this) это Объект, чьи собственные перечисляемые свойства будут возвращены.
+    for (; counter < objLength; counter++) {
+        delete this[counter];
+    }
+
+    return this;
+};
+
+// получает все соседние элементы не включая сам элемент (ищем внутри родительского элемнта опредлененного блока)
+$.prototype.siblings = function() { // ищем не по селектору а по соседним элементам
+    let numberOfItems = 0; // счетчики чтобы в будущем отчистить наш обьект
+    let counter = 0; // и чтобы правильно записывать все свойства
+
+    const copyObj = Object.assign({}, this); // будем работать с копией обьекта дабы избежать багов
+
+    for (let i = 0; i < copyObj.length; i++) {
+
+        const arr = copyObj[i].parentNode.children; // children получить всех потомков
+        // в this записываем всех соседей котороые есть у этого блока
+
+        for (let j = 0; j < arr.length; j++) { 
+            if (copyObj[i] === arr[j]) { 
+                continue;
+            }
+
+            this[counter] = arr[j];
+            counter++;
+        }
+
+        numberOfItems += arr.length -1;
+    }
+    
+    this.length = numberOfItems;
+
+    const objLength = Object.keys(this).length;
+    for (; numberOfItems < objLength; numberOfItems++) { 
+        delete this[numberOfItems];
+    } 
+
+    return this;
+};
+
+// Улучшил метод siblings
+// $.prototype.siblings = function () {
+ 
+//     const newObj = [...this[0].parentElement.children].filter(item => item !== this[0])
+ 
+//     for (let i = 0; i < this.length; i++) {
+//         delete this[i]
+//     }
+ 
+//     Object.assign(this, newObj)
+//     this.length = newObj.length
+//     return this
+// }
+
+
+
+
+
+
+
+
+// другие решения
+// $.prototype.index = function (element) {
+//     let children = this[0].children;
+//     [...children].forEach((item, n) => {
+//         checkIndex(item, n);
+//     });
+
+//     function checkIndex(item, index) {
+//         let n;
+//         for (let i = 0; i < [...children].length; i++) {
+//             if ([...children][i] === document.querySelector(element)) {
+//                 n = i;
+//             }
+//         }
+//         return index === n;
+//     }
+//     return [...children].findIndex(checkIndex);
+// };
+// $.prototype.find = function (selector) {
+//     if (selector) {
+//         for (let i = 0; i < this.length; i++) {
+//             this[i] = this[i].querySelectorAll(selector);
+//         }
+//         let copy = Object.values(this);
+//         delete copy[copy.length - 1];
+//         copy.forEach(item => {
+//             item.forEach((elem, i) => {
+//                 this[i] = elem;
+//                 this.length = item.length;
+//             });
+//         });
+//         return this;
+//     }else{
+//         return this;
+//     }
 // };

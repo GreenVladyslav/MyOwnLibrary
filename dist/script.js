@@ -165,7 +165,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_handlers__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/handlers */ "./src/js/lib/modules/handlers.js");
 /* harmony import */ var _modules_attribute__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/attribute */ "./src/js/lib/modules/attribute.js");
 /* harmony import */ var _modules_actions__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/actions */ "./src/js/lib/modules/actions.js");
+/* harmony import */ var _modules_effects__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/effects */ "./src/js/lib/modules/effects.js");
  // делаем мы это для того чтобы мы могли дальше импортировать модули
+
 
 
 
@@ -186,7 +188,7 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../core */ "./src/js/lib/core.js");
- // позволяет быстро менять html структуру внури каких-то элементов не только менять но и получать содержимое этого элемента
+ //innerHTML позволяет быстро менять html структуру внури каких-то элементов не только менять но и получать содержимое этого элемента
 
 _core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.html = function (content) {
   //1.Когда мы передаем и замещаем
@@ -280,6 +282,111 @@ _core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.find = function (selecto
 //     Object.assign(this, newObj);
 //     this.length = newObj.length;
 //     return this;
+// };
+// В this лежит обьект в котором по ключам записаны опредлеленные ноды и легнс
+// closest получает сам элемент или выше по иерархии
+
+
+_core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.closest = function (selector) {
+  let counter = 0;
+
+  for (let i = 0; i < this.length; i++) {
+    this[i] = this[i].closest(selector);
+    counter++;
+
+    if (this[i] === null) {
+      const thisNull = 'Не найдено';
+      this[i] = thisNull;
+    }
+  } // если вдруг останутся какие-то свойства которые не пренодлжедат команде closest мы их удалим
+
+
+  const objLength = Object.keys(this).length; // (this) это Объект, чьи собственные перечисляемые свойства будут возвращены.
+
+  for (; counter < objLength; counter++) {
+    delete this[counter];
+  }
+
+  return this;
+}; // получает все соседние элементы не включая сам элемент (ищем внутри родительского элемнта опредлененного блока)
+
+
+_core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.siblings = function () {
+  // ищем не по селектору а по соседним элементам
+  let numberOfItems = 0; // счетчики чтобы в будущем отчистить наш обьект
+
+  let counter = 0; // и чтобы правильно записывать все свойства
+
+  const copyObj = Object.assign({}, this); // будем работать с копией обьекта дабы избежать багов
+
+  for (let i = 0; i < copyObj.length; i++) {
+    const arr = copyObj[i].parentNode.children; // children получить всех потомков
+    // в this записываем всех соседей котороые есть у этого блока
+
+    for (let j = 0; j < arr.length; j++) {
+      if (copyObj[i] === arr[j]) {
+        continue;
+      }
+
+      this[counter] = arr[j];
+      counter++;
+    }
+
+    numberOfItems += arr.length - 1;
+  }
+
+  this.length = numberOfItems;
+  const objLength = Object.keys(this).length;
+
+  for (; numberOfItems < objLength; numberOfItems++) {
+    delete this[numberOfItems];
+  }
+
+  return this;
+}; // Улучшил метод siblings
+// $.prototype.siblings = function () {
+//     const newObj = [...this[0].parentElement.children].filter(item => item !== this[0])
+//     for (let i = 0; i < this.length; i++) {
+//         delete this[i]
+//     }
+//     Object.assign(this, newObj)
+//     this.length = newObj.length
+//     return this
+// }
+// другие решения
+// $.prototype.index = function (element) {
+//     let children = this[0].children;
+//     [...children].forEach((item, n) => {
+//         checkIndex(item, n);
+//     });
+//     function checkIndex(item, index) {
+//         let n;
+//         for (let i = 0; i < [...children].length; i++) {
+//             if ([...children][i] === document.querySelector(element)) {
+//                 n = i;
+//             }
+//         }
+//         return index === n;
+//     }
+//     return [...children].findIndex(checkIndex);
+// };
+// $.prototype.find = function (selector) {
+//     if (selector) {
+//         for (let i = 0; i < this.length; i++) {
+//             this[i] = this[i].querySelectorAll(selector);
+//         }
+//         let copy = Object.values(this);
+//         delete copy[copy.length - 1];
+//         copy.forEach(item => {
+//             item.forEach((elem, i) => {
+//                 this[i] = elem;
+//                 this.length = item.length;
+//             });
+//         });
+//         return this;
+//     }else{
+//         return this;
+//     }
 // };
 
 /***/ }),
@@ -450,6 +557,151 @@ _core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.toggle = function () {
 
 /***/ }),
 
+/***/ "./src/js/lib/modules/effects.js":
+/*!***************************************!*\
+  !*** ./src/js/lib/modules/effects.js ***!
+  \***************************************/
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../core */ "./src/js/lib/core.js");
+ // 1. Показывать опередленные элементы через прозрачность и опредленное время
+
+_core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.animateOverTime = function (duration, callback, final) {
+  // duration - количество миллисекунд за которое будет происходить анимация (указывает при вызовае в main.js)
+  let start = null;
+
+  function _animateOverTime(time) {
+    // с лоудышем это техническая функция
+    if (!start) {
+      start = time; // авто time записали как старовтое время и от него отталкиваемся
+    } // функция _animareOverTime будет запускатся каждый раз через опредленные интервал вренми котороый по факту решает браузер 
+    // каждый раз функция будет получать аргумент time котороый мы не можем контролироват он автоматически приходит
+
+
+    let progress = time - start; // progress отслеэивает прогресс
+
+    let complection = Math.min(progress / duration, 1);
+    callback(complection); // при каждом запуске функции каждый раз у меня будет изменятся opacity в зависимоти от формы
+
+    if (start < duration) {
+      // как только старт больше продолжительности(скорость воспроизвездения анимации) то стоп анимации
+      window.requestAnimationFrame(_animateOverTime);
+    } else {
+      // Этот функционал должен запуститься когда анимация закончилась 
+      if (typeof final === 'function') {
+        final();
+      }
+    }
+  }
+
+  return _animateOverTime; // это техническая функция  возващаем  из этого метода чтобы использовать 
+};
+
+_core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.fadeIn = function (duration, display, final) {
+  for (let i = 0; i < this.length; i++) {
+    // закончится тогда когда закончтся элементы в обьекте this
+    this[i].style.display = display || 'block'; // а можно в аругмент добавить display = block по умолчани. а это старый вариант вернет нам правую часть 
+
+    const _fadeIn = complection => {
+      this[i].style.opacity = complection;
+    };
+
+    const ani = this.animateOverTime(duration, _fadeIn, final); // duration обязательный
+
+    requestAnimationFrame(ani);
+  }
+
+  return this;
+}; // 2. Тоже ссамое только скрывая их
+
+
+_core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.fadeOut = function (duration, final) {
+  // display = none
+  for (let i = 0; i < this.length; i++) {
+    // закончится тогда когда закончтся элементы в обьекте this
+    const _fadeOut = complection => {
+      // complection - параметр по изменения
+      this[i].style.opacity = 1 - complection; // будет становится прозрачнее
+
+      if (complection === 1) {
+        this[i].style.display = 'none';
+      }
+
+      this[i].style.opacity = complection;
+    };
+
+    const ani = this.animateOverTime(duration, _fadeOut, final); // duration обязательный
+
+    requestAnimationFrame(ani);
+  }
+
+  return this;
+};
+
+_core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.fadeIn = function () {
+  let duration = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 800;
+
+  function animateFadeIn(elem) {
+    let dur = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 800;
+    let iterations = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
+    const keyframes = [{
+      opacity: '0',
+      offset: 0
+    }, {
+      opacity: '1',
+      offset: 1
+    }];
+    const timing = {
+      duration: dur,
+      iterations: iterations
+    };
+    return elem.animate(keyframes, timing);
+  }
+
+  for (let i = 0; i < this.length; i++) {
+    const element = this[i];
+    animateFadeIn(element, duration);
+  }
+
+  return this;
+};
+
+_core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.fadeOut = function () {
+  let duration = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 800;
+
+  function animateFadeOut(elem) {
+    let dur = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 800;
+    let iterations = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
+    const keyframes = [{
+      opacity: '1',
+      offset: 0
+    }, {
+      opacity: '0',
+      offset: 1
+    }];
+    const timing = {
+      duration: dur,
+      iterations: iterations
+    };
+    return elem.animate(keyframes, timing);
+  }
+
+  for (let i = 0; i < this.length; i++) {
+    const element = this[i];
+    animateFadeOut(element, duration);
+    setTimeout(() => {
+      element.style.display = 'none';
+    }, duration);
+  }
+
+  return this;
+};
+
+/***/ }),
+
 /***/ "./src/js/lib/modules/handlers.js":
 /*!****************************************!*\
   !*** ./src/js/lib/modules/handlers.js ***!
@@ -521,9 +773,12 @@ __webpack_require__.r(__webpack_exports__);
 // $('div').click(function() {
 //     console.log($(this).index()); // позволит получить номер элемента на который мы кликаем
 // });
+// console.log($('div').eq(2).find('.more')); // find
+// console.log($('.some').closest('.findme')); // closest
+// console.log($('.findme').siblings()); // sibling
 
-console.log(Object(_lib_lib__WEBPACK_IMPORTED_MODULE_0__["default"])('div').eq(2).find('.more')); // $('button').setAttr('type', 'submit'); //атрибут
-// console.log($('button').html('Hello'));
+Object(_lib_lib__WEBPACK_IMPORTED_MODULE_0__["default"])('button').fadeIn(3000); // $('button').setAttr('type', 'submit'); //атрибут
+// console.log($('button').html('Hello'));  innerHtml
 
 /***/ })
 
