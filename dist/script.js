@@ -86,6 +86,33 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./src/js/lib/components/dropdown.js":
+/*!*******************************************!*\
+  !*** ./src/js/lib/components/dropdown.js ***!
+  \*******************************************/
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../core */ "./src/js/lib/core.js");
+
+
+_core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.dropdown = function () {
+  for (let i = 0; i < this.length; i++) {
+    const id = Object(_core__WEBPACK_IMPORTED_MODULE_0__["default"])(this[i]).getAttr('id');
+    Object(_core__WEBPACK_IMPORTED_MODULE_0__["default"])(this[i]).click(() => {
+      Object(_core__WEBPACK_IMPORTED_MODULE_0__["default"])(`[data-toggle-id="${id}"]`).fadeToggle(300);
+    });
+  }
+}; //1.способ подключения Уже гоотовая верстка мы ее просто помещаем из документации на страницу и хотим  чтобы она сразу заработала ! нужно сразу заинициализировать все элементы которыое подоходят по опредлененному атрибуту
+// 2.способ когда приходит от сервера
+
+
+Object(_core__WEBPACK_IMPORTED_MODULE_0__["default"])('.dropdown-toggle').dropdown(); // теперь та верстка котороая у нас поместилась на странице сразу же будет работать
+
+/***/ }),
+
 /***/ "./src/js/lib/core.js":
 /*!****************************!*\
   !*** ./src/js/lib/core.js ***!
@@ -166,7 +193,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_attribute__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/attribute */ "./src/js/lib/modules/attribute.js");
 /* harmony import */ var _modules_actions__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/actions */ "./src/js/lib/modules/actions.js");
 /* harmony import */ var _modules_effects__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/effects */ "./src/js/lib/modules/effects.js");
+/* harmony import */ var _components_dropdown__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./components/dropdown */ "./src/js/lib/components/dropdown.js");
  // делаем мы это для того чтобы мы могли дальше импортировать модули
+
 
 
 
@@ -586,7 +615,7 @@ _core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.animateOverTime = functi
     let complection = Math.min(progress / duration, 1);
     callback(complection); // при каждом запуске функции каждый раз у меня будет изменятся opacity в зависимоти от формы
 
-    if (start < duration) {
+    if (progress < duration) {
       // как только старт больше продолжительности(скорость воспроизвездения анимации) то стоп анимации
       window.requestAnimationFrame(_animateOverTime);
     } else {
@@ -628,9 +657,8 @@ _core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.fadeOut = function (dura
 
       if (complection === 1) {
         this[i].style.display = 'none';
-      }
+      } // this[i].style.opacity = complection;
 
-      this[i].style.opacity = complection;
     };
 
     const ani = this.animateOverTime(duration, _fadeOut, final); // duration обязательный
@@ -641,64 +669,63 @@ _core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.fadeOut = function (dura
   return this;
 };
 
-_core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.fadeIn = function () {
-  let duration = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 800;
-
-  function animateFadeIn(elem) {
-    let dur = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 800;
-    let iterations = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
-    const keyframes = [{
-      opacity: '0',
-      offset: 0
-    }, {
-      opacity: '1',
-      offset: 1
-    }];
-    const timing = {
-      duration: dur,
-      iterations: iterations
-    };
-    return elem.animate(keyframes, timing);
-  }
-
+_core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.fadeToggle = function (duration, display, final) {
   for (let i = 0; i < this.length; i++) {
-    const element = this[i];
-    animateFadeIn(element, duration);
+    if (window.getComputedStyle(this[i]).display === 'none') {
+      Object(_core__WEBPACK_IMPORTED_MODULE_0__["default"])(this[i]).fadeIn(duration, display, final); // style.display = display || 'block';
+      // const _fadeIn = (complection) => {
+      //     this[i].style.opacity = complection;
+      // };
+      // const ani = this.animateOverTime(duration, _fadeIn, final); // duration обязательный
+      // requestAnimationFrame(ani);
+    } else {
+      Object(_core__WEBPACK_IMPORTED_MODULE_0__["default"])(this[i]).fadeOut(duration, final); // const _fadeOut = (complection) => {
+      //     this[i].style.opacity = 1 - complection;
+      //     if (complection === 1) {
+      //         this[i].style.display = 'none';
+      //     }
+      //     // this[i].style.opacity = complection;
+      // };
+      // const ani = this.animateOverTime(duration, _fadeOut, final); // duration обязательный
+      // requestAnimationFrame(ani);
+    }
   }
 
   return this;
-};
-
-_core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.fadeOut = function () {
-  let duration = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 800;
-
-  function animateFadeOut(elem) {
-    let dur = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 800;
-    let iterations = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 1;
-    const keyframes = [{
-      opacity: '1',
-      offset: 0
-    }, {
-      opacity: '0',
-      offset: 1
-    }];
-    const timing = {
-      duration: dur,
-      iterations: iterations
-    };
-    return elem.animate(keyframes, timing);
-  }
-
-  for (let i = 0; i < this.length; i++) {
-    const element = this[i];
-    animateFadeOut(element, duration);
-    setTimeout(() => {
-      element.style.display = 'none';
-    }, duration);
-  }
-
-  return this;
-};
+}; // Web Animations API пример
+// $.prototype.fadeIn = function (duration = 800) {
+//     function animateFadeIn(elem, dur = 800, iterations = 1) {
+//         const keyframes = [
+//             {opacity: '0', offset: 0},
+//             {opacity: '1', offset: 1},
+//         ];
+//         const timing = {duration: dur, iterations: iterations};
+//         return elem.animate(keyframes, timing);
+//     }
+//     for (let i = 0; i < this.length; i++) {
+//         const element = this[i];
+//         animateFadeIn(element, duration);
+//     }
+//     return this;
+// };
+// $.prototype.fadeOut = function (duration = 800) {
+//     function animateFadeOut(elem, dur = 800, iterations = 1) {
+//         const keyframes = [
+//             {opacity: '1', offset: 0},
+//             {opacity: '0', offset: 1},
+//         ];
+//         const timing = {duration: dur, iterations: iterations};
+//         return elem.animate(keyframes, timing);
+//     }
+//     for (let i = 0; i < this.length; i++) {
+//         const element = this[i];
+//         animateFadeOut(element, duration);
+//         setTimeout(() => {
+//             element.style.display = 'none';
+//         }, duration);
+//     }
+//     return this;
+// };
 
 /***/ }),
 
@@ -766,7 +793,29 @@ _core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.click = function (handle
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _lib_lib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./lib/lib */ "./src/js/lib/lib.js");
- // Контекст вызова this = мы получаем html элеемент когда мы исопльзуем callback функции в качестве обычной то мы обращаясь к this получаем тот элемент на котором произошло событие
+ // $('#first').on('click', () => {
+//     $('div').eq(1).find();
+// });
+// $('[data-count="second"]').on('click', () => {
+//     $('div').eq(2).fadeIn(800);
+// });
+// $('button').eq(2).on('click', () => {
+//     $('.w-500').fadeOut(800);
+// });
+// console.log($('div').find('.w-500'));
+
+Object(_lib_lib__WEBPACK_IMPORTED_MODULE_0__["default"])('.wrap').html(`
+    <div class="dropdown">
+        <button class="btn btn-primary dropdown-toggle" id="dropdownMenuButton">Dropdown button</button>
+        <div class="dropdown-menu" data-toggle-id="dropdownMenuButton">
+            <a href="#" class="dropdown-item">Link 1</a>
+            <a href="#" class="dropdown-item">Link 2</a>
+            <a href="#" class="dropdown-item">Link 3</a>
+        </div>
+    </div>`); // если ответ приходит от сервера вызиывает после innerhtml dropdown тоже
+
+Object(_lib_lib__WEBPACK_IMPORTED_MODULE_0__["default"])('.dropdown-toggle').dropdown(); // ТЕСТ СКРИПТОВ
+// Контекст вызова this = мы получаем html элеемент когда мы исопльзуем callback функции в качестве обычной то мы обращаясь к this получаем тот элемент на котором произошло событие
 // $('button').on('click', function() { 
 //     $('div').eq(1).toggleClass('active'); // переключие класса
 // });
@@ -776,9 +825,14 @@ __webpack_require__.r(__webpack_exports__);
 // console.log($('div').eq(2).find('.more')); // find
 // console.log($('.some').closest('.findme')); // closest
 // console.log($('.findme').siblings()); // sibling
-
-Object(_lib_lib__WEBPACK_IMPORTED_MODULE_0__["default"])('button').fadeIn(3000); // $('button').setAttr('type', 'submit'); //атрибут
+// $('button').fadeIn(3000); //fadeIn Анимация
+// $('button').setAttr('type', 'submit'); //атрибут
 // console.log($('button').html('Hello'));  innerHtml
+// Все что касается стилей
+// Лоудуш в начале для того чтобы каждый раз при сохранении файликов компелировался именно общий файл стилей а не каждый отдельный файлик компилятор котороый натсоен в галпе знает об этом
+// genreal - общее различные базовые вещи (перемененные, шрифты, типография (размеры шрифтов) миксины, самые главне стили на странице)
+// components - отдельные стили для отдельных компанентов (табы, слайдеры)
+// helpers - вспомогательные классы которые будем использовать на странице
 
 /***/ })
 

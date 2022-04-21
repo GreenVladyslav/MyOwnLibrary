@@ -15,7 +15,7 @@ $.prototype.animateOverTime = function(duration, callback, final) { // duration 
 
         callback(complection); // при каждом запуске функции каждый раз у меня будет изменятся opacity в зависимоти от формы
 
-        if (start < duration) { // как только старт больше продолжительности(скорость воспроизвездения анимации) то стоп анимации
+        if (progress < duration) { // как только старт больше продолжительности(скорость воспроизвездения анимации) то стоп анимации
             window.requestAnimationFrame(_animateOverTime);
         } else { // Этот функционал должен запуститься когда анимация закончилась 
             if (typeof final === 'function') {
@@ -52,7 +52,7 @@ $.prototype.fadeOut = function(duration, final) { // display = none
                 this[i].style.display = 'none';
             }
 
-            this[i].style.opacity = complection;
+            // this[i].style.opacity = complection;
         };
 
         const ani = this.animateOverTime(duration, _fadeOut, final); // duration обязательный
@@ -63,42 +63,79 @@ $.prototype.fadeOut = function(duration, final) { // display = none
 };
 
 
-$.prototype.fadeIn = function (duration = 800) {
-    function animateFadeIn(elem, dur = 800, iterations = 1) {
-        const keyframes = [
-            {opacity: '0', offset: 0},
-            {opacity: '1', offset: 1},
-        ];
-        const timing = {duration: dur, iterations: iterations};
-
-        return elem.animate(keyframes, timing);
-    }
-
+$.prototype.fadeToggle = function(duration, display, final) {
     for (let i = 0; i < this.length; i++) {
-        const element = this[i];
-        animateFadeIn(element, duration);
+        if (window.getComputedStyle(this[i]).display === 'none') {
+            $(this[i]).fadeIn(duration, display, final);
+            // style.display = display || 'block';
+
+            // const _fadeIn = (complection) => {
+            //     this[i].style.opacity = complection;
+            // };
+    
+            // const ani = this.animateOverTime(duration, _fadeIn, final); // duration обязательный
+            // requestAnimationFrame(ani);
+
+        } else {
+            $(this[i]).fadeOut(duration, final);
+            // const _fadeOut = (complection) => {
+            //     this[i].style.opacity = 1 - complection;
+            //     if (complection === 1) {
+            //         this[i].style.display = 'none';
+            //     }
+    
+            //     // this[i].style.opacity = complection;
+            // };
+    
+            // const ani = this.animateOverTime(duration, _fadeOut, final); // duration обязательный
+            // requestAnimationFrame(ani);
+        }
     }
+
     return this;
 };
 
-$.prototype.fadeOut = function (duration = 800) {
-    function animateFadeOut(elem, dur = 800, iterations = 1) {
-        const keyframes = [
-            {opacity: '1', offset: 0},
-            {opacity: '0', offset: 1},
-        ];
-        const timing = {duration: dur, iterations: iterations};
 
-        return elem.animate(keyframes, timing);
-    }
 
-    for (let i = 0; i < this.length; i++) {
-        const element = this[i];
 
-        animateFadeOut(element, duration);
-        setTimeout(() => {
-            element.style.display = 'none';
-        }, duration);
-    }
-    return this;
-};
+
+// Web Animations API пример
+// $.prototype.fadeIn = function (duration = 800) {
+//     function animateFadeIn(elem, dur = 800, iterations = 1) {
+//         const keyframes = [
+//             {opacity: '0', offset: 0},
+//             {opacity: '1', offset: 1},
+//         ];
+//         const timing = {duration: dur, iterations: iterations};
+
+//         return elem.animate(keyframes, timing);
+//     }
+
+//     for (let i = 0; i < this.length; i++) {
+//         const element = this[i];
+//         animateFadeIn(element, duration);
+//     }
+//     return this;
+// };
+
+// $.prototype.fadeOut = function (duration = 800) {
+//     function animateFadeOut(elem, dur = 800, iterations = 1) {
+//         const keyframes = [
+//             {opacity: '1', offset: 0},
+//             {opacity: '0', offset: 1},
+//         ];
+//         const timing = {duration: dur, iterations: iterations};
+
+//         return elem.animate(keyframes, timing);
+//     }
+
+//     for (let i = 0; i < this.length; i++) {
+//         const element = this[i];
+
+//         animateFadeOut(element, duration);
+//         setTimeout(() => {
+//             element.style.display = 'none';
+//         }, duration);
+//     }
+//     return this;
+// };
