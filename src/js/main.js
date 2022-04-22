@@ -15,19 +15,10 @@ import $ from './lib/lib';
 
 // console.log($('div').find('.w-500'));
 
-$('.wrap').html(
-    `
-    <div class="dropdown">
-        <button class="btn btn-primary dropdown-toggle" id="dropdownMenuButton">Dropdown button</button>
-        <div class="dropdown-menu" data-toggle-id="dropdownMenuButton">
-            <a href="#" class="dropdown-item">Link 1</a>
-            <a href="#" class="dropdown-item">Link 2</a>
-            <a href="#" class="dropdown-item">Link 3</a>
-        </div>
-    </div>`
-);
-// если ответ приходит от сервера вызиывает после innerhtml dropdown тоже
-$('.dropdown-toggle').dropdown();
+
+
+// // если ответ приходит от сервера вызиывает после innerhtml dropdown тоже
+// $('.dropdown-toggle').dropdown();
 
 
 

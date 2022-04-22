@@ -4,7 +4,7 @@ $.prototype.dropdown = function() {
     for (let i = 0; i < this.length; i++) {
         const id = $(this[i]).getAttr('id');
          $(this[i]).click(() => {
-            $(`[data-toggle-id="${id}"]`).fadeToggle(300);
+            $(`[data-toggle-id="${id}"]`).fadeToggle(800);
          });
     }
 };
@@ -13,5 +13,6 @@ $.prototype.dropdown = function() {
 
 //1.способ подключения Уже гоотовая верстка мы ее просто помещаем из документации на страницу и хотим  чтобы она сразу заработала ! нужно сразу заинициализировать все элементы которыое подоходят по опредлененному атрибуту
 // 2.способ когда приходит от сервера
-$('.dropdown-toggle').dropdown();
+$('.btn-primary').dropdown();
+$('.btn-success').dropdown();
 // теперь та верстка котороая у нас поместилась на странице сразу же будет работать
