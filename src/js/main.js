@@ -13,10 +13,12 @@ $('button').eq(2).on('click', () => {
     $('.w-500').fadeOut(800);
 });
 
-$('#trigger').click(() => $('#trigger').createModal({
+
+
+$('#trigger').click(() => $('#trigger').createModal({ // [3 вариант]
     text: {
-        title: 'Modal Title',
-        body: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Expedita necessitatibus possimus excepturi debitis consequatur, praesentium incidunt minima quod dolorum quidem ab commodi eveniet ipsam quasi aspernatur inventore officiis labore hic!'
+        title: 'Modal title',
+        body: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Harum minus doloremque nesciunt enim rem quam corporis? Dolorem pariatur magnam distinctio perferendis. Ratione dolorem voluptates iusto facilis odit veritatis, suscipit voluptatibus!'
     },
     btns: {
         count: 3,
@@ -28,23 +30,57 @@ $('#trigger').click(() => $('#trigger').createModal({
             ],
             [
                 'Save changes',
-                ['btn-success', 'mr-10'],
+                ['btn-success'],
                 false,
                 () => {
-                    alert('Данные сохраненны');
+                    alert('Данные сохранены');
                 }
             ],
             [
-                'You are welcome!',
-                ['btn-warning'],
+                'Another btn',
+                ['btn-warning', 'ml-10'],
                 false,
                 () => {
-                    alert('У тебя получилось');
-                }  
+                    alert('Hello World');
+                }
             ]
         ]
     }
 }));
+
+
+
+// $('#trigger').click(() => $('#trigger').createModal( // [2 вариант]
+
+//     { 
+//         textTitle: 'Modal Title',
+//         textBody: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Expedita necessitatibus possimus excepturi debitis consequatur, praesentium incidunt minima quod dolorum quidem ab commodi eveniet ipsam quasi aspernatur inventore officiis labore hic!',
+//         btnCount: 3,
+//         settingBtn: [
+//             [
+//                 'Close',
+//                 ['btn-danger', 'mr-10'],
+//                 true
+//             ],
+//             [
+//                 'Save changes',
+//                 ['btn-success', 'mr-10'],
+//                 false,
+//                 () => {
+//                     alert('Данные сохраненны');
+//                 }
+//             ],
+//             [
+//                 'You are welcome!',
+//                 ['btn-warning'],
+//                 false,
+//                 () => {
+//                     alert('У тебя получилось');
+//                 }  
+//             ]
+//         ]
+//     }
+// ));
 
 
 // console.log($('div').find('.w-500'));
