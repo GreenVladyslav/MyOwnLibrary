@@ -16,9 +16,9 @@ $.prototype.addClass = function(...classNames) { // rest оператор рас
 
 $.prototype.removeClass = function(...classNames) { 
     for (let i = 0; i < this.length; i++) {
-        if (!this[i].classList) {
-            continue;
-        }
+        // if (this[i].classList) {
+        //     continue;
+        // }
 
         this[i].classList.remove(...classNames); 
     }
