@@ -1,17 +1,51 @@
 import $ from './lib/lib';
 
-// $('#first').on('click', () => {
-//     $('div').eq(1).find();
-// });
+$('#first').on('click', () => {
+    $('div').eq(1).find();
+});
 
 
-// $('[data-count="second"]').on('click', () => {
-//     $('div').eq(2).fadeIn(800);
-// });
+$('[data-count="second"]').on('click', () => {
+    $('div').eq(2).fadeIn(800);
+});
 
-// $('button').eq(2).on('click', () => {
-//     $('.w-500').fadeOut(800);
-// });
+$('button').eq(2).on('click', () => {
+    $('.w-500').fadeOut(800);
+});
+
+$('#trigger').click(() => $('#trigger').createModal({
+    text: {
+        title: 'Modal Title',
+        body: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Expedita necessitatibus possimus excepturi debitis consequatur, praesentium incidunt minima quod dolorum quidem ab commodi eveniet ipsam quasi aspernatur inventore officiis labore hic!'
+    },
+    btns: {
+        count: 3,
+        settings: [
+            [
+                'Close',
+                ['btn-danger', 'mr-10'],
+                true
+            ],
+            [
+                'Save changes',
+                ['btn-success', 'mr-10'],
+                false,
+                () => {
+                    alert('Данные сохраненны');
+                }
+            ],
+            [
+                'You are welcome!',
+                ['btn-warning'],
+                false,
+                () => {
+                    alert('У тебя получилось');
+                }  
+            ]
+        ]
+    }
+}));
+
 
 // console.log($('div').find('.w-500'));
 
