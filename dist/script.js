@@ -86,6 +86,108 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./src/js/lib/components/accordion.js":
+/*!********************************************!*\
+  !*** ./src/js/lib/components/accordion.js ***!
+  \********************************************/
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../core */ "./src/js/lib/core.js");
+
+
+_core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.accordion = function () {
+  let headActive = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'accordion-head--active';
+  let contentActive = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'accordion-content--active';
+  let paddings = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 40;
+
+  for (let i = 0; i < this.length; i++) {
+    Object(_core__WEBPACK_IMPORTED_MODULE_0__["default"])(this[i]).click(() => {
+      // один показывает, другие скрывает 
+      const headContent = document.querySelectorAll('.accordion-head');
+
+      if (!this[i].classList.contains(headActive)) {
+        headContent.forEach(elem => {
+          elem.classList.remove(headActive);
+          elem.nextElementSibling.classList.remove(contentActive);
+          elem.nextElementSibling.style.maxHeight = '0px';
+        });
+      }
+
+      Object(_core__WEBPACK_IMPORTED_MODULE_0__["default"])(this[i]).toggleClass(headActive);
+      Object(_core__WEBPACK_IMPORTED_MODULE_0__["default"])(this[i].nextElementSibling).toggleClass(contentActive);
+
+      if (this[i].classList.contains(headActive)) {
+        this[i].nextElementSibling.style.maxHeight = this[i].nextElementSibling.scrollHeight + paddings + "px"; //this[i].nextElementSibling.scrollHeight вернет просто число (высота котороая должна быть у элемента и плюс padding)
+      } else {
+        this[i].nextElementSibling.style.maxHeight = '0px';
+      }
+    });
+  }
+};
+
+Object(_core__WEBPACK_IMPORTED_MODULE_0__["default"])('.accordion-head').accordion();
+
+/***/ }),
+
+/***/ "./src/js/lib/components/carousel.js":
+/*!*******************************************!*\
+  !*** ./src/js/lib/components/carousel.js ***!
+  \*******************************************/
+/*! no exports provided */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../core */ "./src/js/lib/core.js");
+
+
+_core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.carousel = function () {
+  for (let i = 0; i < this.length; i++) {
+    const width = window.getComputedStyle(this[i].querySelector('.carousel-inner')).width;
+    const slides = this[i].querySelectorAll('.carousel-item');
+    const slidesField = this[i].querySelector('.carousel-slides');
+    slidesField.style.width = 100 * slides.length + '%'; // если у нас будет три слайда то ширина блока 300 если 5 то 500 чтобы мы могли поместить все слайды во внутрь и чтобы они занимали одн и тоже значение по ширине вне зависимоти от контента внутри чтобы их красиво передевгиать
+
+    slides.forEach(slide => {
+      slide.style.width = width;
+    });
+    let offset = 0;
+    let slideIndex = 1;
+    Object(_core__WEBPACK_IMPORTED_MODULE_0__["default"])(this[i].querySelector('[data-slide-to="next"]')).click(e => {
+      e.preventDefault(); // if (offset == (+width.slice(0, width.length -2) * (slides.length - 1))) {  (+width.replace(/\D/g, '') = 500px отнимаем 500пх
+
+      if (offset == +width.replace(/\D/g, '') * (slides.length - 1)) {
+        // если текущий слайд послдений (100px "каждого отдельно слайда" * кол-во сладйов) = 500px
+        // берем ширин 
+        offset = 0;
+      } else {
+        offset += +width.replace(/\D/g, ''); // если мы не дошли до конца то мы просто добаляем ширинку каждого слудещего слайдера
+      }
+
+      slidesField.style.transform = `TranslateX(-${offset}px)`;
+    });
+    Object(_core__WEBPACK_IMPORTED_MODULE_0__["default"])(this[i].querySelector('[data-slide-to="prev"]')).click(e => {
+      e.preventDefault();
+
+      if (offset == 0) {
+        // Если наш слайдер сейчас первый то мы должны переместить наш слайдер в самый конец
+        offset = +width.replace(/\D/g, '') * (slides.length - 1);
+      } else {
+        offset -= +width.replace(/\D/g, ''); // ставим минус -= мы идем на слайд назад
+      }
+
+      slidesField.style.transform = `TranslateX(-${offset}px)`;
+    });
+  }
+};
+
+Object(_core__WEBPACK_IMPORTED_MODULE_0__["default"])('.carousel').carousel(); // 1. Нам необходимо взять всю оболочку для всех слайдов и утсанаваливаем ему ширину (устаниовим каждому слайдеру ширину)
+
+/***/ }),
+
 /***/ "./src/js/lib/components/dropdown.js":
 /*!*******************************************!*\
   !*** ./src/js/lib/components/dropdown.js ***!
@@ -381,7 +483,8 @@ __webpack_require__.r(__webpack_exports__);
 _core__WEBPACK_IMPORTED_MODULE_0__["default"].prototype.tab = function () {
   for (let i = 0; i < this.length; i++) {
     Object(_core__WEBPACK_IMPORTED_MODULE_0__["default"])(this[i]).on('click', () => {
-      Object(_core__WEBPACK_IMPORTED_MODULE_0__["default"])(this[i]).addClass('tab-item--active').siblings().removeClass('tab-item--active').closest('.tab').find('.tab-content').removeClass('tab-content--active').eq(Object(_core__WEBPACK_IMPORTED_MODULE_0__["default"])(this[i]).index()).addClass('tab-content--active');
+      Object(_core__WEBPACK_IMPORTED_MODULE_0__["default"])(this[i]).addClass('tab-item--active').siblings().removeClass('tab-item--active').closest('.tab').find('.tab-content').removeClass('tab-content--active').eq(Object(_core__WEBPACK_IMPORTED_MODULE_0__["default"])(this[i]).index()) // на тот который мы кликаем
+      .addClass('tab-content--active');
     });
   }
 };
@@ -473,7 +576,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _components_dropdown__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./components/dropdown */ "./src/js/lib/components/dropdown.js");
 /* harmony import */ var _components_modal__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./components/modal */ "./src/js/lib/components/modal.js");
 /* harmony import */ var _components_tab__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./components/tab */ "./src/js/lib/components/tab.js");
+/* harmony import */ var _components_accordion__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./components/accordion */ "./src/js/lib/components/accordion.js");
+/* harmony import */ var _components_carousel__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./components/carousel */ "./src/js/lib/components/carousel.js");
  // делаем мы это для того чтобы мы могли дальше импортировать модули
+
+
 
 
 

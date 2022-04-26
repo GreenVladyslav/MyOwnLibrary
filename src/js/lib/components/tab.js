@@ -10,7 +10,7 @@ $.prototype.tab = function() {
                 .closest('.tab')
                 .find('.tab-content')
                 .removeClass('tab-content--active')
-                .eq($(this[i]).index())
+                .eq($(this[i]).index()) // на тот который мы кликаем
                 .addClass('tab-content--active');
         });
     }
